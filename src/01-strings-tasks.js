@@ -1,3 +1,6 @@
+/* eslint-disable no-new-wrappers */
+/* eslint-disable no-undef */
+/* eslint-disable no-prototype-builtins */
 /* *******************************************************************************************
  *                                                                                           *
  * Plese read the following tutorial before implementing tasks:                              *
@@ -66,7 +69,7 @@ function getStringFromTemplate(firstName, lastName) {
  *   'Hello, Chuck Norris!' => 'Chuck Norris'
  */
 function extractNameFromTemplate(value) {
-  return value.match(/Hello,\s(.*)!/)[1];
+  return value.slice(7, -1);
 }
 
 
@@ -127,7 +130,7 @@ function repeatString(value, count) {
  *   'ABABAB','BA' => 'ABAB'
  */
 function removeFirstOccurrences(str, value) {
-  return str.replace(new RegExp(`(.*)${value}(.*)$`), '$1$2');
+  return str.replace(value, '');
 }
 
 /**
@@ -142,7 +145,7 @@ function removeFirstOccurrences(str, value) {
  *   '<a>' => 'a'
  */
 function unbracketTag(str) {
-  return str.match(/^.(.*).$/)[1];
+  return str.replace(/[<>]/g, '');
 }
 
 
@@ -176,7 +179,7 @@ function convertToUpperCase(str) {
  *   'info@gmail.com' => ['info@gmail.com']
  */
 function extractEmails(str) {
-  return str.match(/([a-z0-9.]+@\w+\.com)/g);
+  return str.split(';');
 }
 
 /**
@@ -202,21 +205,8 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(width, height) {
-  let txt = '';
-  for (let i = 0; i < height; i += 1) {
-    for (let j = 0; j < width; j += 1) {
-      if (i === 0 && j === 0) txt += '┌';
-      if (i === 0 && j === width - 1) txt += '┐';
-      if (i === height - 1 && j === width - 1) txt += '┘';
-      if (i === height - 1 && j === 0) txt += '└';
-      if ((i === height - 1 || i === 0) && j > 0 && j < width - 1) txt += '─';
-      if ((i > 0 && i < height - 1) && (j === 0 || j === width - 1)) txt += '│';
-      if ((i > 0 && i < height - 1) && (j > 0 && j < width - 1)) txt += ' ';
-      if (j === width - 1) txt += '\n';
-    }
-  }
-  return txt;
+function getRectangleString(/* width, height */) {
+  throw new Error('Not implemented');
 }
 
 
@@ -237,19 +227,10 @@ function getRectangleString(width, height) {
  *
  */
 function encodeToRot13(str) {
-  // A-Z [65-90] and a-z [97-122]
-  let result = '';
-  let range = 0;
-  for (let i = 0; i < str.length; i += 1) {
-    const char = str.charCodeAt(i);
-    if (char >= 65 && char <= 90) range = 65;
-    if (char >= 97 && char <= 122) range = 97;
-    const symbol = char + (-1 * Math.trunc((char - range) / 13) * 26 + 13);
-    if (range !== 0) result += String.fromCharCode(symbol);
-    else result += str[i];
-    range = 0;
-  }
-  return result;
+  const one = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const base = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm';
+  const obj = one.split('').reduce((acc, n, i) => ({ ...acc, [n]: base.split('')[i] }), {});
+  return str.split('').map((el) => (obj.hasOwnProperty(el) ? obj[el] : el)).join('');
 }
 
 /**
@@ -266,7 +247,7 @@ function encodeToRot13(str) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-  return typeof value === 'string' || value instanceof String;
+  return typeof (value) === 'string' || value instanceof String;
 }
 
 
@@ -295,14 +276,12 @@ function isString(value) {
  *   'K♠' => 51
  */
 function getCardId(value) {
-  const icon = ['♣', '♦', '♥', '♠'];
-  const letter = {
-    A: 0, J: 10, Q: 11, K: 12,
-  };
-  const firstPart = value.slice(0, -1);
-  const secondPart = value.substr(-1);
-  const num = Number.isNaN(Number(firstPart)) ? letter[firstPart] : Number(firstPart) - 1;
-  return num + icon.indexOf(secondPart)*13;
+  return [
+    'A♣', '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣',
+    'A♦', '2♦', '3♦', '4♦', '5♦', '6♦', '7♦', '8♦', '9♦', '10♦', 'J♦', 'Q♦', 'K♦',
+    'A♥', '2♥', '3♥', '4♥', '5♥', '6♥', '7♥', '8♥', '9♥', '10♥', 'J♥', 'Q♥', 'K♥',
+    'A♠', '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠',
+  ].indexOf(value);
 }
 
 
